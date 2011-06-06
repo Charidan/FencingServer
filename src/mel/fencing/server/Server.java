@@ -19,13 +19,23 @@ public class Server
             while (true)
             {
                 UserSession s = UserSession.makeSession(server.accept());
-                if (s != null) sessions.add(s);
+                if (s != null) addSession(s);
             }
         }
         catch (IOException e)
         {
             System.err.println(e.getMessage());
         }
+    }
+    
+    public static synchronized void addSession(UserSession userSession)
+    {
+        sessions.add(userSession);
+    }
+
+    public static synchronized void purge(UserSession userSession)
+    {
+        sessions.remove(userSession);
     }
 
 }
