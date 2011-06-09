@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class Server
 {
+    public static final int PORT = 9738;
     static ArrayList<UserSession> sessions = new ArrayList<UserSession>();
 
     /**
@@ -15,7 +16,7 @@ public class Server
     {
         try
         {
-            ServerSocket server = new ServerSocket(0);
+            ServerSocket server = new ServerSocket(PORT);
             while (true)
             {
                 UserSession s = UserSession.makeSession(server.accept());
