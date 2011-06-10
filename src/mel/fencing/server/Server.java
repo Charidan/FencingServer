@@ -20,6 +20,7 @@ public class Server
             while (true)
             {
                 UserSession s = UserSession.makeSession(server.accept());
+                System.out.println("Socket Accepted");
                 if (s != null) addSession(s);
             }
         }
@@ -31,6 +32,7 @@ public class Server
     
     public static synchronized void addSession(UserSession userSession)
     {
+        System.out.println("Connection Accepted");
         sessions.add(userSession);
     }
 

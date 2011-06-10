@@ -40,6 +40,7 @@ public class UserSession extends Thread
     @Override
     public void run()
     {
+        System.out.println("run");
         try
         {
             login();
@@ -58,6 +59,7 @@ public class UserSession extends Thread
         {
             //TODO respond to commands
             String s = in.readLine();
+            System.out.println(s);
             out.println(s);
             out.flush();
         }
@@ -73,18 +75,28 @@ public class UserSession extends Thread
             {
                 sendSuccess();
                 return;
+            } else
+            {
+                sendFailure();
+                return;
             }
         }
     }
 
+    private void sendFailure()
+    {
+        out.println("E"+name);
+        out.flush();
+    }
+
     private void sendSuccess()
     {
-        out.println(name+" has logged in successfully!");
+        out.println("L"+name);
         out.flush();
     }
 
     private boolean auth(String name, String password)
     {
-        return true;
+        return false;
     }
 }
