@@ -9,9 +9,6 @@ public class Server
     public static final int PORT = 9738;
     static ArrayList<UserSession> sessions = new ArrayList<UserSession>();
 
-    /**
-     * @param args
-     */
     public static void main(String[] args)
     {
         try
@@ -20,7 +17,6 @@ public class Server
             while (true)
             {
                 UserSession s = UserSession.makeSession(server.accept());
-                System.out.println("Socket Accepted");
                 if (s != null) addSession(s);
             }
         }
@@ -32,7 +28,6 @@ public class Server
     
     public static synchronized void addSession(UserSession userSession)
     {
-        System.out.println("Connection Accepted");
         sessions.add(userSession);
     }
 

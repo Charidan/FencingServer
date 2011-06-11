@@ -40,11 +40,10 @@ public class UserSession extends Thread
     @Override
     public void run()
     {
-        System.out.println("run");
         try
         {
-            login();
-            readLoop();
+            if(login()) readLoop();
+            else Server.purge(this);
         }
         catch(Exception e)
         {
@@ -59,13 +58,13 @@ public class UserSession extends Thread
         {
             //TODO respond to commands
             String s = in.readLine();
-            System.out.println(s);
+            //System.out.println(s);
             out.println(s);
             out.flush();
         }
     }
 
-    private void login() throws IOException
+    private boolean login() throws IOException
     {
         for(int i = 0; i < MAX_TRIES; i++)
         {
@@ -74,13 +73,13 @@ public class UserSession extends Thread
             if(auth(name, password))
             {
                 sendSuccess();
-                return;
+                return true;
             } else
             {
                 sendFailure();
-                return;
             }
         }
+        return false;
     }
 
     private void sendFailure()
@@ -94,7 +93,7 @@ public class UserSession extends Thread
         out.println("L"+name);
         out.flush();
     }
-
+    
     private boolean auth(String name, String password)
     {
         return false;
