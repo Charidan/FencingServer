@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import mel.security.Account;
 
 public class UserSession extends Thread
 {
@@ -96,6 +97,15 @@ public class UserSession extends Thread
     
     private boolean auth(String name, String password)
     {
-        return false;
+        Account a = Server.accMan.getAccount(name);
+        try
+        {
+            a.authenticate(password);
+            return true;
+        }
+        catch(SecurityException e)
+        {
+            return false;
+        }
     }
 }
