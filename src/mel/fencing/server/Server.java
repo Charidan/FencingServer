@@ -9,8 +9,7 @@ public class Server
 {
     public static final int PORT = 9738;
     static ArrayList<UserSession> sessions = new ArrayList<UserSession>();
-    public static final String dir = "C:/Users/Public/Desktop/fileStore";
-    public static final AccountManager accMan = new AccountManager(dir);
+    public static final AccountManager accMan = new AccountManager(AccountManager.defaultDir);
 
     public static void main(String[] args)
     {
