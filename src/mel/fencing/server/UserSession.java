@@ -11,16 +11,16 @@ public class UserSession extends Thread
 {
     public static final int MAX_TRIES = 3;
     
-    private Socket s;
+    private Socket socket;
     private BufferedReader in;
     private PrintStream out;
-    private String name;
+    private String name = null;
 
-    private UserSession(Socket socket) throws IOException
+    private UserSession(Socket s) throws IOException
     {
-        s = socket;
-        in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        out = new PrintStream(s.getOutputStream());
+        this.socket = s;
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintStream(socket.getOutputStream());
     }
 
     public static UserSession makeSession(Socket socket)
@@ -59,10 +59,39 @@ public class UserSession extends Thread
         {
             //TODO respond to commands
             String s = in.readLine();
-            //System.out.println(s);
-            out.println(s);
-            out.flush();
+            char c = s.charAt(0);
+            switch(c)
+            {
+                case 'N':
+                    if(s.charAt(1) == 'T') challengeTarget(s.substring(2));
+                    else if(s.charAt(1) == 'O') challengeOpen();
+                    else badCommand(s);
+                    break;
+            }
         }
+    }
+
+    public void send(String s)
+    {
+        out.println(s);
+        out.flush();
+    }
+    
+    private void challengeTarget(String s)
+    {
+       Server.challengeTarget(this,s);
+        
+    }
+
+    private void challengeOpen()
+    {
+        Server.challengeOpen(this);
+    }
+
+    private void badCommand(String s2)
+    {
+        out.println("EU:"+socket);
+        out.flush();
     }
 
     private boolean login() throws IOException
@@ -74,6 +103,7 @@ public class UserSession extends Thread
             if(auth(name, password))
             {
                 sendSuccess();
+                Server.register(name,this);
                 return true;
             } else
             {
