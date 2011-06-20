@@ -67,6 +67,8 @@ public class UserSession extends Thread
                     else if(s.charAt(1) == 'O') challengeOpen();
                     else badCommand(s);
                     break;
+                default:
+                    badCommand(s);
             }
         }
     }
@@ -79,18 +81,20 @@ public class UserSession extends Thread
     
     private void challengeTarget(String s)
     {
+       // TODO make a Lobby module rather than trying to do this in the server
        Server.challengeTarget(this,s);
         
     }
 
     private void challengeOpen()
     {
+        // TODO move this to the Lobby module
         Server.challengeOpen(this);
     }
 
     private void badCommand(String s2)
     {
-        out.println("EU:"+socket);
+        out.println("EU:"+s2);
         out.flush();
     }
 
