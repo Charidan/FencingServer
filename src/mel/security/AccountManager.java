@@ -27,6 +27,7 @@ public class AccountManager
     private File dir;
     private static AccountManager singleton = null;
     public static final String defaultDir = "C:/gameServer/accounts";
+    public static final String linuxDir = "/home/charidan/fencingdata/accounts";
 
     public AccountManager(String directoryName)
     {
@@ -90,7 +91,7 @@ public class AccountManager
     synchronized public Account getAccount(String name)
             throws SecurityException
     {
-        File f = new File(dir, name + ".act");
+        File f = new File(dir, name.toLowerCase() + ".act");
         if (!f.exists())
         {
             throw new SecurityException("Could not access account - Account does not exist.");

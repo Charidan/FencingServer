@@ -131,9 +131,9 @@ public class UserSession extends Thread
     
     private boolean auth(String name, String password)
     {
-        Account a = Server.accMan.getAccount(name);
         try
         {
+            Account a = Server.accMan.getAccount(name);
             a.authenticate(password);
             return true;
         }
