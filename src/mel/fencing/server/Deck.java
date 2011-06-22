@@ -37,6 +37,13 @@ public class Deck
     
     public Card getCard(int index) { return cards.get(index); }
     
+    public Card drawCard()
+    {
+        Card c = cards.get(0);
+        cards.remove(0);
+        return c;
+    }
+    
     public String toString()
     {
 	StringBuilder out = new StringBuilder(49);

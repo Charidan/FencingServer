@@ -81,15 +81,14 @@ public class UserSession extends Thread
     
     private void challengeTarget(String s)
     {
-       // TODO make a Lobby module rather than trying to do this in the server
-       Server.challengeTarget(this,s);
-        
+        send("W"+s);
+        Server.lobby.challengeTarget(this, Server.name2session.get(s));
     }
 
     private void challengeOpen()
     {
-        // TODO move this to the Lobby module
-        Server.challengeOpen(this);
+        send("Wan opponent");
+        Server.lobby.challengeOpen(this);
     }
 
     private void badCommand(String s2)
