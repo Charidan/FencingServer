@@ -12,8 +12,8 @@ public class Server
     static ArrayList<UserSession> sessions = new ArrayList<UserSession>();
     static HashMap<String,UserSession> name2session = new HashMap<String,UserSession>();
     static Lobby lobby = new Lobby();
-    public static final AccountManager accMan = new AccountManager(AccountManager.defaultDir);
-    //public static final AccountManager accMan = new AccountManager(AccountManager.linuxDir);
+    //public static final AccountManager accMan = new AccountManager(AccountManager.defaultDir);
+    public static final AccountManager accMan = new AccountManager(AccountManager.linuxDir);
 
     public static void main(String[] args)
     {

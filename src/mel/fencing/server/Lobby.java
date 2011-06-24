@@ -12,10 +12,11 @@ public class Lobby
     
     /*
      * OPCODES FOR LOBBY
-     * F = Failure
-     * T = Targeted
+     * E = Error
+     * T = Targeted (you have been challenged)
      * A = Accept
-     * C = Canceled
+     * C = Canceled by challenger
+     * c = rejected by target
      */
     
     synchronized public void challengeOpen(UserSession challenger)
@@ -28,16 +29,16 @@ public class Lobby
     {
         if(target == null)
         {
-            challenger.send("FOpponent is not logged in");
+            challenger.send("EOpponent is not logged in");
         }
         if(challenger == target)
         {
-            challenger.send("FCannot challenge self.");
+            challenger.send("ECannot challenge self.");
             return;
         }
         if(unavailable.contains(target))
         {
-            challenger.send("F"+target.getName()+" is already in a game.");
+            challenger.send("E"+target.getName()+" is already in a game.");
             return;
         }
         challengers.put(challenger, target);
@@ -47,12 +48,11 @@ public class Lobby
     
     synchronized public void cancel(UserSession out)
     {
-        //TODO cancel challenge (if any) by out -- to be called by purge and when user manually cancels
         if(out == openChallenger) openChallenger = null;
         if(challengers.containsKey(out))
         {
             UserSession target = challengers.get(out);
-            target.send("FChallenge withdrawn");
+            target.send("C"+out.getName());
             challengers.remove(out);
             targets.remove(target);
         }
@@ -69,7 +69,7 @@ public class Lobby
     {
         if(unavailable.contains(challenger))
         {
-            target.send("F"+challenger.getName()+" is already in a game");
+            target.send("E"+challenger.getName()+" is already in a game");
             return;
         }
         unavailable.add(challenger);
@@ -84,6 +84,6 @@ public class Lobby
         UserSession challenger = targets.get(target);
         challengers.remove(challenger);
         targets.remove(target);
-        challenger.send("FChallenge Rejected");
+        challenger.send("c"+target.getName());
     }
 }
