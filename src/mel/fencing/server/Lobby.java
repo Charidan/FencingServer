@@ -30,6 +30,12 @@ public class Lobby
         if(target == null)
         {
             challenger.send("EOpponent is not logged in");
+            return;
+        }
+        if(challengers.containsKey(challenger))
+        {
+            challenger.send("ECancel prior challenge first");
+            return;
         }
         if(challenger == target)
         {

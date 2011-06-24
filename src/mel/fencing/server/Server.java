@@ -12,11 +12,14 @@ public class Server
     static ArrayList<UserSession> sessions = new ArrayList<UserSession>();
     static HashMap<String,UserSession> name2session = new HashMap<String,UserSession>();
     static Lobby lobby = new Lobby();
-    //public static final AccountManager accMan = new AccountManager(AccountManager.defaultDir);
-    public static final AccountManager accMan = new AccountManager(AccountManager.linuxDir);
+    public static AccountManager accMan;
 
     public static void main(String[] args)
     {
+        String dir = AccountManager.defaultDir;
+        if(args.length > 0) dir = args[0];
+        accMan = new AccountManager(dir);
+        
         try
         {
             ServerSocket server = new ServerSocket(PORT);
