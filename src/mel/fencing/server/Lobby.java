@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Lobby
 {
-    ArrayList<UserSession> openChallenges = new ArrayList<UserSession>();
-    ArrayList<UserSession> unavailable = new ArrayList<UserSession>();
+    private UserSession openChallenger = null;
+    private ArrayList<UserSession> unavailable = new ArrayList<UserSession>();
     
     /*
      * OPCODES FOR LOBBY
@@ -15,13 +15,18 @@ public class Lobby
      * C = Canceled
      */
     
-    public void challengeOpen(UserSession challenger)
+    synchronized public void challengeOpen(UserSession challenger)
     {
-        openChallenges.add(challenger);
+        if(openChallenger == null) openChallenger = challenger;
+        else startGame(challenger, openChallenger);
     }
     
-    public void challengeTarget(UserSession challenger, UserSession target)
+    synchronized public void challengeTarget(UserSession challenger, UserSession target)
     {
+        if(target == null)
+        {
+            challenger.send("FOpponent is not logged in");
+        }
         if(challenger == target)
         {
             challenger.send("FCannot challenge self.");
@@ -33,6 +38,16 @@ public class Lobby
             return;
         }
         target.send("T"+challenger.getName());
+    }
+    
+    synchronized public void cancel(UserSession out)
+    {
+        //TODO cancel challenge (if any) by out -- to be called by purge and when user manually cancels
+    }
+    
+    public void startGame(UserSession a, UserSession b)
+    {
+        // TODO call the appropriate item in Game module
     }
     
     public void acceptChallenge(UserSession challenger, UserSession target)
