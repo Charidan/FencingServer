@@ -66,7 +66,16 @@ public class UserSession extends Thread
                     if(s.charAt(1) == 'T') challengeTarget(s.substring(2));
                     else if(s.charAt(1) == 'O') challengeOpen();
                     else badCommand(s);
-                    break;
+                break;
+                case 'C':
+                    Server.lobby.cancel(this);
+                break;
+                case 'A':
+                    Server.lobby.acceptChallenge(this);
+                break;
+                case 'R':
+                    Server.lobby.rejectChallenge(this);
+                break;
                 default:
                     badCommand(s);
             }
