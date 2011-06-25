@@ -26,7 +26,12 @@ public class Lobby
             openChallenger = challenger;
             challenger.send("Wan opponent");
         }
-        else acceptChallenge(challenger, openChallenger);
+        else 
+        {
+            acceptChallenge(challenger, openChallenger);
+            openChallenger = null;
+        }
+            
     }
     
     synchronized public void challengeTarget(UserSession challenger, UserSession target)
