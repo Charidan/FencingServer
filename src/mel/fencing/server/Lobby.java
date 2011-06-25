@@ -21,7 +21,11 @@ public class Lobby
     
     synchronized public void challengeOpen(UserSession challenger)
     {
-        if(openChallenger == null) openChallenger = challenger;
+        if(openChallenger == null)
+        {
+            openChallenger = challenger;
+            challenger.send("Wan opponent");
+        }
         else acceptChallenge(challenger, openChallenger);
     }
     
@@ -49,6 +53,7 @@ public class Lobby
         }
         challengers.put(challenger, target);
         targets.put(target, challenger);
+        challenger.send("W"+target.getName());
         target.send("T"+challenger.getName());
     }
     

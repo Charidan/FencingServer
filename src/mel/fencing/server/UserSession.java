@@ -90,13 +90,11 @@ public class UserSession extends Thread
     
     private void challengeTarget(String s)
     {
-        send("W"+s);
         Server.lobby.challengeTarget(this, Server.name2session.get(s));
     }
 
     private void challengeOpen()
     {
-        send("Wan opponent");
         Server.lobby.challengeOpen(this);
     }
 
