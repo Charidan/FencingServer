@@ -1,0 +1,17 @@
+This contains all allowable messages to and from server and client
+
+Outbound to client
+
+c[name]					[name] has canceled/rejected a challenge from you
+C[name]					[name] has canceled/withdrawn a challenge to you
+E[freeText]				an error message
+T[name]					you have been challenged by [name]
+W[name | "an opponent"]	wait for opponent (challenge is pending with no error)
+
+Inbound to server
+
+A						accept challenge
+C						cancel/withdraw challenge issued by this client 
+NO						issue an open challenge
+NT[name]				issue a challenge against [name]
+R						cancel/reject challenge issued toward this client

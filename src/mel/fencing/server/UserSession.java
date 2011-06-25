@@ -57,7 +57,7 @@ public class UserSession extends Thread
     {
         while(true)
         {
-            //TODO respond to commands
+            // TODO RFI think about the tradeoff between switch-pattern and command-pattern
             String s = in.readLine();
             char c = s.charAt(0);
             switch(c)
