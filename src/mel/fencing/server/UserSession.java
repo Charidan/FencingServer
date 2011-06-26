@@ -82,6 +82,11 @@ public class UserSession extends Thread
         }
     }
 
+    public String getUsername()
+    {
+        return name;
+    }
+    
     public void send(String s)
     {
         out.println(s);

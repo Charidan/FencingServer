@@ -64,7 +64,7 @@ public class Lobby
         }
         if(unavailable.contains(target))
         {
-            challenger.send("E"+target.getName()+" is already in a game.");
+            challenger.send("E"+target.getUsername()+" is already in a game.");
             return;
         }
         if(unavailable.contains(challenger))
@@ -74,8 +74,8 @@ public class Lobby
         }
         challenger2target.put(challenger, target);
         target2challegner.put(target, challenger);
-        challenger.send("W"+target.getName());
-        target.send("T"+challenger.getName());
+        challenger.send("W"+target.getUsername());
+        target.send("T"+challenger.getUsername());
     }
     
     synchronized public void cancel(UserSession out)
@@ -84,7 +84,7 @@ public class Lobby
         if(challenger2target.containsKey(out))
         {
             UserSession target = challenger2target.get(out);
-            target.send("C"+out.getName());
+            target.send("C"+out.getUsername());
             challenger2target.remove(out);
             target2challegner.remove(target);
         }
@@ -101,7 +101,7 @@ public class Lobby
     {
         if(unavailable.contains(challenger))
         {
-            target.send("E"+challenger.getName()+" is already in a game");
+            target.send("E"+challenger.getUsername()+" is already in a game");
             return;
         }
         unavailable.add(challenger);
@@ -116,6 +116,6 @@ public class Lobby
         UserSession challenger = target2challegner.get(target);
         challenger2target.remove(challenger);
         target2challegner.remove(target);
-        challenger.send("c"+target.getName());
+        challenger.send("c"+target.getUsername());
     }
 }
