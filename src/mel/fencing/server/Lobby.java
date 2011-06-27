@@ -8,7 +8,7 @@ public class Lobby
     private UserSession openChallenger = null;
     private ArrayList<UserSession> unavailable = new ArrayList<UserSession>();
     private HashMap<UserSession,UserSession> challenger2target = new HashMap<UserSession,UserSession>();
-    private HashMap<UserSession,UserSession> target2challegner = new HashMap<UserSession,UserSession>();
+    private HashMap<UserSession,UserSession> target2challenger = new HashMap<UserSession,UserSession>();
     
     /*
      * OPCODES FOR LOBBY
@@ -72,8 +72,14 @@ public class Lobby
             challenger.send("EOne game at a time.");
             return;
         }
+        if(target2challenger.containsKey(target))
+        {
+            //TODO add a wait queue
+            challenger.send("ETarget already has pending challenge.");
+            return;
+        }
         challenger2target.put(challenger, target);
-        target2challegner.put(target, challenger);
+        target2challenger.put(target, challenger);
         challenger.send("W"+target.getUsername());
         target.send("T"+challenger.getUsername());
     }
@@ -86,14 +92,14 @@ public class Lobby
             UserSession target = challenger2target.get(out);
             target.send("C"+out.getUsername());
             challenger2target.remove(out);
-            target2challegner.remove(target);
+            target2challenger.remove(target);
         }
-        if(target2challegner.containsKey(out)) rejectChallenge(out);
+        if(target2challenger.containsKey(out)) rejectChallenge(out);
     }
     
     public void acceptChallenge(UserSession target)
     {
-        UserSession challenger = target2challegner.get(target);
+        UserSession challenger = target2challenger.get(target);
         acceptChallenge(challenger, target);
     }
     
@@ -107,15 +113,15 @@ public class Lobby
         unavailable.add(challenger);
         unavailable.add(target);
         challenger2target.remove(challenger);
-        target2challegner.remove(target);
+        target2challenger.remove(target);
         Game.newGame(challenger,target);
     }
     
     public void rejectChallenge(UserSession target)
     {
-        UserSession challenger = target2challegner.get(target);
+        UserSession challenger = target2challenger.get(target);
         challenger2target.remove(challenger);
-        target2challegner.remove(target);
+        target2challenger.remove(target);
         challenger.send("c"+target.getUsername());
     }
 }
