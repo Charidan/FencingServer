@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Lobby
 {
     private UserSession openChallenger = null;
-    private ArrayList<UserSession> unavailable = new ArrayList<UserSession>();
+    private ArrayList<UserSession> playing = new ArrayList<UserSession>();
     private HashMap<UserSession,UserSession> challenger2target = new HashMap<UserSession,UserSession>();
     private HashMap<UserSession,UserSession> target2challenger = new HashMap<UserSession,UserSession>();
     
@@ -21,7 +21,7 @@ public class Lobby
     
     synchronized public void challengeOpen(UserSession challenger)
     {
-        if(unavailable.contains(challenger))
+        if(playing.contains(challenger))
         {
             // TODO RFE support multiple games at once
             // TODO RFE support saving game state
@@ -62,20 +62,22 @@ public class Lobby
             challenger.send("ECannot challenge self.");
             return;
         }
-        if(unavailable.contains(target))
+        if(playing.contains(target))
         {
             challenger.send("E"+target.getUsername()+" is already in a game.");
             return;
         }
-        if(unavailable.contains(challenger))
+        if(playing.contains(challenger))
         {
             challenger.send("EOne game at a time.");
             return;
         }
         if(target2challenger.containsKey(target))
         {
-            //TODO add a wait queue
-            challenger.send("ETarget already has pending challenge.");
+            //TODO test wait queue
+            challenger2target.put(challenger, target);
+            target.addChallenge(challenger.getUsername());
+            challenger.send("W"+target.getUsername());
             return;
         }
         challenger2target.put(challenger, target);
@@ -87,41 +89,62 @@ public class Lobby
     synchronized public void cancel(UserSession out)
     {
         if(out == openChallenger) openChallenger = null;
-        if(challenger2target.containsKey(out))
+        if(challenger2target.containsKey(out)) //if is a chalenger
         {
             UserSession target = challenger2target.get(out);
+            if(target2challenger.get(target) != out) //if is secondary challenger
+            {
+                challenger2target.remove(out).removeChallenge(out.getUsername());
+                return;
+            }
             target.send("C"+out.getUsername());
-            challenger2target.remove(out);
             target2challenger.remove(target);
+            challenger2target.remove(out);
+            target.processNextChallenge();
         }
         if(target2challenger.containsKey(out)) rejectChallenge(out);
     }
     
-    public void acceptChallenge(UserSession target)
+    synchronized public void acceptChallenge(UserSession target)
     {
         UserSession challenger = target2challenger.get(target);
         acceptChallenge(challenger, target);
     }
     
-    public void acceptChallenge(UserSession challenger, UserSession target)
+    synchronized public void acceptChallenge(UserSession challenger, UserSession target)
     {
-        if(unavailable.contains(challenger))
+        if(playing.contains(challenger))
         {
             target.send("E"+challenger.getUsername()+" is already in a game");
             return;
         }
-        unavailable.add(challenger);
-        unavailable.add(target);
+        playing.add(challenger);
+        playing.add(target);
         challenger2target.remove(challenger);
         target2challenger.remove(target);
+        target.rejectPending();
         Game.newGame(challenger,target);
     }
     
-    public void rejectChallenge(UserSession target)
+    synchronized public void rejectChallenge(UserSession target)
     {
         UserSession challenger = target2challenger.get(target);
         challenger2target.remove(challenger);
         target2challenger.remove(target);
         challenger.send("c"+target.getUsername());
+        target.processNextChallenge();
+    }
+    
+    synchronized public void rejectChallenge(UserSession target, UserSession challenger)
+    {
+        challenger2target.remove(challenger);
+        target2challenger.remove(target);
+        challenger.send("c"+target.getUsername());
+    }
+
+    synchronized public void challengeFromQueue(UserSession challenger, UserSession target)
+    {
+        target2challenger.put(target, challenger);
+        target.send("T"+challenger.getUsername());
     }
 }

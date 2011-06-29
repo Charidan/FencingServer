@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import mel.security.Account;
 
 public class UserSession extends Thread
@@ -15,6 +17,7 @@ public class UserSession extends Thread
     private BufferedReader in;
     private PrintStream out;
     private String name = null;
+    private List<String> challenges = new ArrayList<String>();
 
     private UserSession(Socket s) throws IOException
     {
@@ -82,6 +85,11 @@ public class UserSession extends Thread
         }
     }
 
+    void addChallenge(String username)
+    {
+        challenges.add(username);
+    }
+    
     public String getUsername()
     {
         return name;
@@ -152,5 +160,25 @@ public class UserSession extends Thread
         {
             return false;
         }
+    }
+
+    void rejectPending()
+    {
+        for(String challenger: challenges)
+        {
+            Server.lobby.rejectChallenge(this, Server.name2session.get(challenger));
+            challenges.remove(challenger);
+        }
+    }
+
+    void processNextChallenge()
+    {
+        if(challenges.isEmpty()) return;
+        Server.lobby.challengeFromQueue(Server.name2session.get(challenges.remove(0)), this);
+    }
+
+    public void removeChallenge(String username)
+    {
+        challenges.remove(username);
     }
 }

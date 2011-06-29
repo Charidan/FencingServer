@@ -42,6 +42,8 @@ public class Server
     
     public static synchronized void register(String username, UserSession userSession)
     {
+        UserSession oldSession = name2session.get(username);
+        if(oldSession != null) purge(oldSession);
         name2session.put(username,userSession);
     }
 
