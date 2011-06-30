@@ -50,7 +50,11 @@ public class Server
     public static synchronized void purge(UserSession userSession)
     {
         String name = userSession.getUsername();
-        if(name != null) name2session.remove(name);
+        if(name != null)
+        {
+            UserSession mapSession = name2session.get(name);
+            if(mapSession == userSession) name2session.remove(name);
+        }
         lobby.cancel(userSession);
         sessions.remove(userSession);
     }
