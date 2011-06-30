@@ -181,4 +181,16 @@ public class UserSession extends Thread
     {
         challenges.remove(username);
     }
+    
+    public void kill()
+    {
+        send("K");
+        try
+        {
+            socket.close();
+        } catch(IOException e)
+        {
+            //do nothing
+        }
+    }
 }
