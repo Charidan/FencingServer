@@ -2,7 +2,7 @@ package mel.fencing.server;
 
 public class Hand
 {
-    public final int HAND_SIZE = 5;
+    public static final int HAND_SIZE = 5;
     Card card[] = new Card[HAND_SIZE];
     
     public void fill(Deck deck)
