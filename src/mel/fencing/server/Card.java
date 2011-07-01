@@ -8,8 +8,6 @@ public class Card
 
     public int getValue() { return value; }
     
-    public String toString()
-    {
-	return ""+value;
-    }
+    public int toChar() { return '0'+value; }
+    public String toString() { return ""+toChar(); }
 }

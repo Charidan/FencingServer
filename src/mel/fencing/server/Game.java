@@ -2,23 +2,25 @@ package mel.fencing.server;
 
 public class Game
 {
-    public static final boolean BLACK = false;
-    public static final boolean WHITE = true;
-    public static final int TURN_BLACK = 0;
-    public static final int TURN_WHITE = 1;
-    public static final int TURN_OVER = 2;
-    public static final int TURN_START = 3;
+    public static final int TURN_BLACK_MOVE = 0;
+    public static final int TURN_BLACK_PARRY = 1;
+    public static final int TURN_WHITE_MOVE = 2;
+    public static final int TURN_WHITE_PARRY = 3;
+    public static final int TURN_GAME_OVER = 4;
+    public static final int COLOR_NONE = 0;
+    public static final int COLOR_WHITE = 1;
+    public static final int COLOR_BLACK = 2;
     
     UserSession black;
     UserSession white;
     Deck deck;
-    //Hand whiteHand;
-    //Hand blackHand;
+    Hand whiteHand;
+    Hand blackHand;
     int blackHP = 5;
     int whiteHP = 5;
-    int blackpos;
-    int whitepos;
-    int turn = TURN_START;
+    int blackpos = 23;
+    int whitepos = 1;
+    int turn = TURN_WHITE_MOVE;
     
     private Game(UserSession challenger, UserSession target)
     {
@@ -26,19 +28,28 @@ public class Game
         white = target;
         deck = new Deck();
         deck.shuffle();
-        //fillHand(BLACK);
-        //fillHand(WHITE);
+        black.setGame(this);
+        black.setColor(COLOR_BLACK);
+        white.setGame(this);
+        white.setColor(COLOR_WHITE);
+        sendNames();
+        blackHand.fill(deck);
+        sendBlackHand();
+        whiteHand.fill(deck);
+        sendWhiteHand();
     }
     
     public static Game newGame(UserSession challenger, UserSession target)
     {
-        //TODO Initialize the game: shuffle the deck, deal hands, etc.
         return new Game(challenger, target);
     }
     
-    /*private void fillHand(boolean player)
+    private void sendWhiteHand() { white.send(whiteHand.toString()); }
+    private void sendBlackHand() { black.send(blackHand.toString()); }
+    
+    private void sendNames()
     {
-        if(player == WHITE) while(whiteHand.size() < 5) whiteHand.add(deck.drawCard());
-        else if(player == BLACK) while(blackHand.size() < 5) blackHand.add(deck.drawCard());
-    }*/
+        white.send("w"+black.getUsername());
+        black.send("b"+white.getUsername());
+    }
 }

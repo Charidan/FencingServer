@@ -74,7 +74,6 @@ public class Lobby
         }
         if(target2challenger.containsKey(target))
         {
-            //TODO test wait queue
             challenger2target.put(challenger, target);
             target.addChallenge(challenger.getUsername());
             challenger.send("W"+target.getUsername());
@@ -122,6 +121,7 @@ public class Lobby
         playing.add(target);
         challenger2target.remove(challenger);
         target2challenger.remove(target);
+        challenger.rejectPending();
         target.rejectPending();
         Game.newGame(challenger,target);
     }

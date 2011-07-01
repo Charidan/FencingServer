@@ -18,6 +18,8 @@ public class UserSession extends Thread
     private PrintStream out;
     private String name = null;
     private List<String> challenges = new ArrayList<String>();
+    private Game game = null;
+    private int color = Game.COLOR_NONE;
 
     private UserSession(Socket s) throws IOException
     {
@@ -40,6 +42,11 @@ public class UserSession extends Thread
             return null;
         }
     }
+    
+    void setGame(Game game) { this.game = game; }
+    void setColor(int c) { this.color = c; }
+    public int getColor() { return color; }
+    Game getGame() { return game; }
     
     @Override
     public void run()
