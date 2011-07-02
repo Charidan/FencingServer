@@ -14,7 +14,11 @@ public class Hand
     {
         StringBuilder sb = new StringBuilder(1+HAND_SIZE);
         sb.append("h");
-        for(Card c: card) sb.append(c.toChar());
+        for(Card c: card)
+        {
+            if(c == null) sb.append('0');
+            else sb.append(c.toChar());
+        }
         return sb.toString();
     }
 }
