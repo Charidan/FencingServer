@@ -14,8 +14,8 @@ public class Game
     UserSession black;
     UserSession white;
     Deck deck;
-    Hand whiteHand;
-    Hand blackHand;
+    Hand whiteHand = new Hand();
+    Hand blackHand = new Hand();
     int blackHP = 5;
     int whiteHP = 5;
     int blackpos = 23;

@@ -70,24 +70,30 @@ public class UserSession extends Thread
             // TODO RFI think about the tradeoff between switch-pattern and command-pattern
             String s = in.readLine();
             char c = s.charAt(0);
-            switch(c)
+            try
             {
-                case 'N':
-                    if(s.charAt(1) == 'T') challengeTarget(s.substring(2));
-                    else if(s.charAt(1) == 'O') challengeOpen();
-                    else badCommand(s);
-                break;
-                case 'C':
-                    Server.lobby.cancel(this);
-                break;
-                case 'A':
-                    Server.lobby.acceptChallenge(this);
-                break;
-                case 'R':
-                    Server.lobby.rejectChallenge(this);
-                break;
-                default:
-                    badCommand(s);
+                switch(c)
+                {
+                    case 'N':
+                        if(s.charAt(1) == 'T') challengeTarget(s.substring(2));
+                        else if(s.charAt(1) == 'O') challengeOpen();
+                        else badCommand(s);
+                    break;
+                    case 'C':
+                        Server.lobby.cancel(this);
+                    break;
+                    case 'A':
+                        Server.lobby.acceptChallenge(this);
+                    break;
+                    case 'R':
+                        Server.lobby.rejectChallenge(this);
+                    break;
+                    default:
+                        badCommand(s);
+                }
+            } catch(Exception e)
+            {
+                int i = 0;
             }
         }
     }

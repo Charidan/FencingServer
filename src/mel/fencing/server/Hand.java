@@ -17,7 +17,7 @@ public class Hand
         for(Card c: card)
         {
             if(c == null) sb.append('0');
-            else sb.append(c.toChar());
+            else sb.append(c.toString());
         }
         return sb.toString();
     }
