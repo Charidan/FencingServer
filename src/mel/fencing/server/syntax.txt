@@ -2,9 +2,13 @@ This contains all allowable messages to and from server and client
 
 Outbound to client
 
+a[a-w][a-w][#]			Standing attack [whitepos][blackpos][attackCount]
 b[name]					you are playing black against [name]
 c[name]					[name] has canceled/rejected a challenge from you
 h[#][#][#][#][#]		your hand contents
+m[a-w][a-w][turn]		move. sets the new turn [whitepos][blackpos][turn]
+p[a-w][a-w][#][turn]	patenandu [whitepos][blackpos][attackCount][turn]
+q[turn]					parry [turn]
 w[name]					you are playing white against [name]
 
 C[name]					[name] has canceled/withdrawn a challenge to you
@@ -14,6 +18,12 @@ W[name | "an opponent"]	wait for opponent (challenge is pending with no error)
 
 
 Inbound to server
+
+a[#][#]					Standing Attack [attackValue][attackCount]
+m[#]					Advance [value]
+r[#]					Retreat [value]
+p[#][#][#]				Patenandu [advanceValue][attackValue][attackCount]
+q						Parry.
 
 A						accept challenge
 C						cancel/withdraw challenge issued by this client 

@@ -52,4 +52,44 @@ public class Game
         white.send("w"+black.getUsername());
         black.send("b"+white.getUsername());
     }
+    
+    void attack(UserSession player, String values)
+    {
+        int playerColor = player == white ? COLOR_WHITE : player == black ? COLOR_BLACK : COLOR_NONE;
+        if(playerColor == COLOR_NONE) player.send("EYou are not a player in this game");
+        if(playerColor == COLOR_WHITE && turn != TURN_WHITE_MOVE) player.send("ENot your turn to move");
+        if(playerColor == COLOR_BLACK && turn != TURN_BLACK_MOVE) player.send("ENot your turn to move");
+        
+        //TODO handle move logic
+    }
+    
+    void move(UserSession player, String values)
+    {
+        int playerColor = player == white ? COLOR_WHITE : player == black ? COLOR_BLACK : COLOR_NONE;
+        if(playerColor == COLOR_NONE) player.send("EYou are not a player in this game");
+        if(playerColor == COLOR_WHITE && turn != TURN_WHITE_MOVE) player.send("ENot your turn to move");
+        if(playerColor == COLOR_BLACK && turn != TURN_BLACK_MOVE) player.send("ENot your turn to move");
+        
+        //TODO handle move logic
+    }
+    
+    void retreat(UserSession player, String values)
+    {
+        int playerColor = player == white ? COLOR_WHITE : player == black ? COLOR_BLACK : COLOR_NONE;
+        if(playerColor == COLOR_NONE) player.send("EYou are not a player in this game");
+        if(playerColor == COLOR_WHITE && turn != TURN_WHITE_MOVE) player.send("ENot your turn to move");
+        if(playerColor == COLOR_BLACK && turn != TURN_BLACK_MOVE) player.send("ENot your turn to move");
+        
+        //TODO handle move logic
+    }
+    
+    void parry(UserSession player, String values)
+    {
+        int playerColor = player == white ? COLOR_WHITE : player == black ? COLOR_BLACK : COLOR_NONE;
+        if(playerColor == COLOR_NONE) player.send("EYou are not a player in this game");
+        if(playerColor == COLOR_WHITE && turn != TURN_WHITE_PARRY) player.send("ENot your turn to parry");
+        if(playerColor == COLOR_BLACK && turn != TURN_BLACK_PARRY) player.send("ENot your turn to parry");
+        
+        //TODO handle parry logic
+    }
 }

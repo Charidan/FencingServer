@@ -88,6 +88,18 @@ public class UserSession extends Thread
                     case 'R':
                         Server.lobby.rejectChallenge(this);
                     break;
+                    case 'a':
+                        game.attack(this, s.substring(1));
+                    break;
+                    case 'm':
+                        game.move(this, s.substring(1));
+                    break;
+                    case 'r':
+                        game.retreat(this, s.substring(1));
+                    break;
+                    case 'p':
+                        game.parry(this, s.substring(1));
+                    break;
                     default:
                         badCommand(s);
                 }
