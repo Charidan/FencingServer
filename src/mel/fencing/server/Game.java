@@ -247,8 +247,8 @@ public class Game
     {
         StringBuilder sb = new StringBuilder(3);
         sb.append("x");
-        sb.append('a'+whitepos-1);
-        sb.append('a'+blackpos-1);
+        sb.append((char)('a'+whitepos-1));
+        sb.append((char)('a'+blackpos-1));
         sendAll(sb.toString());
     }
     
