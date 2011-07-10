@@ -39,6 +39,7 @@ public class Deck
     
     public Card drawCard()
     {
+        if(cards.size() == 0) return null;
         Card c = cards.get(0);
         cards.remove(0);
         return c;
@@ -46,13 +47,13 @@ public class Deck
     
     public String toString()
     {
-	StringBuilder out = new StringBuilder(49);
-	Iterator<Card> i = cards.iterator();
-	out.append(i.next().toString());
-	while(i.hasNext())
-	{
-	    out.append(",").append(i.next().toString());
-	}
-	return out.toString();
+        StringBuilder out = new StringBuilder(49);
+        Iterator<Card> i = cards.iterator();
+        out.append(i.next().toString());
+        while(i.hasNext())
+        {
+            out.append(",").append(i.next().toString());
+        }
+        return out.toString();
     }
 }
