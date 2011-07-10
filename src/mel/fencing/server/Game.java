@@ -84,16 +84,35 @@ public class Game
             else send(player, "ENot your turn to attack");
             return;
         }
-                
-        if(!handOf(color).hasCardWithCards(distance, value, count))
+        
+        Hand hand = handOf(color);
+        if(!hand.hasCardWithCards(distance, value, count))
         {
-            send(player, "EYou don't have the cards to attack ("+value+","+count+")");
+            send(player, "EYou don't have the cards to jump-attack ("+distance+":"+value+","+count+")");
             return;
         }
         
-        // TODO handle attack logic
+        if(blackpos - whitepos != (distance+value))
+        {
+            send(player, "EYou are the wrong distance to jump-attack with a "+distance+" and "+value);
+            return;
+        }
+        
         parryVal = value;
         parryCount = count; 
+        movePosOf(color, distance);        
+        hand.removeByValue(distance);
+        hand.removeByValue(value, count);
+        hand.fill(deck);
+        // TODO distinguish engGame with final attack from endGame without
+        // TODO check rule does game end when deck empty or when try to draw missing card?
+        if(deck.isEmpty()) { endGame(); return; } 
+        turn = otherColor(color)+TURN_PARRY_OR_RETREAT;
+        
+        //TODO notify user of how many cards are in attack
+        notifyPositions();
+        notifyHand(player, hand);
+        notifyTurn();
     }
     
     synchronized void standingAttack(UserSession player, String values)
@@ -112,15 +131,30 @@ public class Game
             return;
         }
 
-        if(!handOf(color).hasCards(value, count))
+        Hand hand = handOf(color);
+        if(!hand.hasCards(value, count))
         {
             send(player, "EYou don't have the cards to attack ("+value+","+count+")");
+            return;
+        }
+        
+        if(blackpos - whitepos != value)
+        {
+            send(player, "EYou are the wrong distance to attack with a "+value);
             return;
         }
         
         // TODO handle attack logic
         parryVal = value;
         parryCount = count;
+        hand.removeByValue(value, count);
+        hand.fill(deck);
+        // TODO distinguish engGame with final attack from endGame without
+        // TODO check rule does game end when deck empty or when try to draw missing card?
+        if(deck.isEmpty()) { endGame(); return; } 
+        turn = otherColor(color)+TURN_PARRY;
+        notifyHand(player, hand);
+        notifyTurn();        
     }
     
     synchronized void move(UserSession player, String values)
@@ -207,13 +241,18 @@ public class Game
             return;
         }
         
-        if(!handOf(color).hasCards(parryVal, parryCount))
+        Hand hand = handOf(color);
+        if(!hand.hasCards(parryVal, parryCount))
         {
             send(player, "EYou don't have the cards to parry ("+parryVal+","+parryCount+")");
             return;
         }
         
-        //TODO remove cards and update state
+        //TODO notify that a parry occurred
+        hand.removeByValue(parryVal, parryCount);
+        //TODO special code for final parry
+        turn = color+TURN_MOVE;
+        notifyTurn();
     }
     
     private void endGame()
