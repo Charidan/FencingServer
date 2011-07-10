@@ -89,7 +89,7 @@ public class UserSession extends Thread
                         Server.lobby.rejectChallenge(this);
                     break;
                     case 'a':
-                        game.attack(this, s.substring(1));
+                        game.standingAttack(this, s.substring(1));
                     break;
                     case 'm':
                         game.move(this, s.substring(1));
@@ -98,6 +98,9 @@ public class UserSession extends Thread
                         game.retreat(this, s.substring(1));
                     break;
                     case 'p':
+                        game.jumpAttack(this, s.substring(1));
+                    break;
+                    case 'q':
                         game.parry(this);
                     break;
                     default:

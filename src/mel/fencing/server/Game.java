@@ -68,10 +68,14 @@ public class Game
         return COLOR_NONE;
     }
     
-    
-    synchronized void attack(UserSession player, String values)
+    synchronized void jumpAttack(UserSession player, String values)
     {
-        if(values.length() != 2) send(player, "ESyntax error in attack:"+values);
+        if(values.length() != 3) send(player, "ESyntax error in attack:"+values);
+        int distance = parseDigit(values.charAt(0));
+        int value = parseDigit(values.charAt(1));
+        int count = parseDigit(values.charAt(2));
+        if(value<0 || count<1) send(player, "ESyntax error in attack:"+values);
+        
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_MOVE) 
@@ -80,13 +84,51 @@ public class Game
             else send(player, "ENot your turn to attack");
             return;
         }
+                
+        if(!handOf(color).hasCardWithCards(distance, value, count))
+        {
+            send(player, "EYou don't have the cards to attack ("+value+","+count+")");
+            return;
+        }
         
         // TODO handle attack logic
+        parryVal = value;
+        parryCount = count; 
+    }
+    
+    synchronized void standingAttack(UserSession player, String values)
+    {
+        if(values.length() != 2) send(player, "ESyntax error in attack:"+values);
+        int value = parseDigit(values.charAt(0));
+        int count = parseDigit(values.charAt(1));
+        if(value<0 || count<1) send(player, "ESyntax error in attack:"+values);
+        
+        int color = playerColor(player);
+        if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
+        if(turn != color+TURN_MOVE) 
+        {
+            if(turn == color+TURN_PARRY || turn == color+TURN_PARRY_OR_RETREAT) send(player, "EDefend before attacking");
+            else send(player, "ENot your turn to attack");
+            return;
+        }
+
+        if(!handOf(color).hasCards(value, count))
+        {
+            send(player, "EYou don't have the cards to attack ("+value+","+count+")");
+            return;
+        }
+        
+        // TODO handle attack logic
+        parryVal = value;
+        parryCount = count;
     }
     
     synchronized void move(UserSession player, String values)
     {
         if(values.length() != 1) send(player, "ESyntax error in advance:"+values);
+        int distance = parseDigit(values.charAt(0));
+        if(distance < 0) send(player, "ESyntax error in advance:"+values);
+        
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_MOVE) 
@@ -95,22 +137,39 @@ public class Game
             else send(player, "ENot your turn to advance");
             return;
         }
+ 
+        if(!hasCard(color, distance))
+        {
+            // hacked or buggy client
+            send(player, "EYou don't have the advance card "+distance);
+            return;
+        }
         
-        //TODO handle advance logic
+        // TODO remove card, update position and hand
     }
-    
+
     synchronized void retreat(UserSession player, String values)
     {
         if(values.length() != 1) send(player, "ESyntax error in retreat:"+values);
+        int distance = parseDigit(values.charAt(0));
+        if(distance < 0) send(player, "ESyntax error in retreat:"+values);
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_PARRY_OR_RETREAT && turn != color+TURN_MOVE)
         {
             if(turn == color+TURN_PARRY) send(player, "EYou cannot retreat from a standing attack");
             else send(player, "ENot your turn to retreat");
+            return;
         }
         
-        //TODO handle retreat logic
+        if(!hasCard(color, distance))
+        {
+            // hacked or buggy client
+            send(player, "EYou don't have the advance card "+distance);
+            return;
+        }
+        
+        // TODO remove card, update position and hand
     }
     
     synchronized void parry(UserSession player)
@@ -121,9 +180,16 @@ public class Game
         {
             if(turn == color+TURN_MOVE) send(player, "EThere is no attack to parry");
             else send(player, "ENot your turn to parry");
+            return;
         }
         
-        //TODO handle parry logic
+        if(!handOf(color).hasCards(parryVal, parryCount))
+        {
+            send(player, "EYou don't have the cards to parry ("+parryVal+","+parryCount+")");
+            return;
+        }
+        
+        //TODO remove cards and update state
     }
     
     private void send(UserSession who, String what)
@@ -135,5 +201,23 @@ public class Game
     {
         send(white, what);
         send(black, what);
+    }
+    
+    static private final int parseDigit(char in)
+    {
+        if(in<'0' || in > '9') return -1;
+        return in-'0';
+    }
+    
+    private final Hand handOf(int color)
+    {
+        if(color == COLOR_WHITE) return whiteHand;
+        if(color == COLOR_BLACK) return blackHand;
+        return null;
+    }
+    
+    private boolean hasCard(int color, int distance)
+    {
+        return handOf(color).hasCard(distance);
     }
 }

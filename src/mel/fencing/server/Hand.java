@@ -21,4 +21,23 @@ public class Hand
         }
         return sb.toString();
     }
+
+    public boolean hasCard(int value)
+    {
+        for(int i=0; i<HAND_SIZE; i++) if(card[i] != null && card[i].getValue() == value) return true;
+        return false;
+    }
+    
+    public boolean hasCards(int value, int quantity)
+    {
+        int count = 0;
+        for(int i=0; i<HAND_SIZE; i++) if(card[i] != null && card[i].getValue() == value) count++;
+        return count >= quantity;
+    }
+    
+    public boolean hasCardWithCards(int single, int multiple, int count)
+    {
+        if(single == multiple) return hasCards(single, count+1);
+        else return hasCard(single) && hasCards(multiple, count);
+    }
 }
