@@ -2,14 +2,12 @@ This contains all allowable messages to and from server and client
 
 Outbound to client
 
-a[a-w][a-w][#]			Standing attack [whitepos][blackpos][attackCount]
 b[name]					you are playing black against [name]
 c[name]					[name] has canceled/rejected a challenge from you
 h[#][#][#][#][#]		your hand contents
-m[a-w][a-w][turn]		move. sets the new turn [whitepos][blackpos][turn]
-p[a-w][a-w][#][turn]	patenandu [whitepos][blackpos][attackCount][turn]
-q[turn]					parry [turn]
+t[turn]					set [turn].
 w[name]					you are playing white against [name]
+x[a-w][a-w]				set Positions [whitepos][blackpos]
 
 C[name]					[name] has canceled/withdrawn a challenge to you
 E[freeText]				an error message

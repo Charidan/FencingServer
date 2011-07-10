@@ -45,6 +45,11 @@ public class Deck
         return c;
     }
     
+    public boolean isEmpty()
+    {
+        return cards.size() == 0;
+    }
+    
     public String toString()
     {
         StringBuilder out = new StringBuilder(49);

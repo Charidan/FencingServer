@@ -10,6 +10,42 @@ public class Hand
         for(int i=0; i<HAND_SIZE; i++) if(card[i] == null) card[i] = deck.drawCard();
     }
     
+    public void removeByValue(int value)
+    {
+        for (int i = 0; i < HAND_SIZE; i++)
+        {
+            if (getValue(i) == value)
+            {
+                card[i] = null;
+                return;
+            }
+        }
+    }
+    
+    public void removeByValue(int value, int count)
+    {
+        for (int i = 0; i < HAND_SIZE; i++)
+        {
+            if (getValue(i) == value)
+            {
+                card[i] = null;
+                count--;
+                if(count == 0) return;
+            }
+        }
+    }
+    
+    public int getValue(int index)
+    {
+        try
+        {
+            return card[index].getValue();
+        } catch(Exception e)
+        {
+            return -1;
+        }
+    }
+    
     public String toString()
     {
         StringBuilder sb = new StringBuilder(1+HAND_SIZE);

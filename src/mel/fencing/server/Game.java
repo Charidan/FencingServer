@@ -138,14 +138,29 @@ public class Game
             return;
         }
  
-        if(!hasCard(color, distance))
+        if(blackpos-whitepos<=distance)
+        {
+            send(player, "EMay not move through other fencer");
+            return;
+        }
+        
+        Hand hand = handOf(color);
+        if(!hand.hasCard(distance))
         {
             // hacked or buggy client
             send(player, "EYou don't have the advance card "+distance);
             return;
         }
-        
-        // TODO remove card, update position and hand
+
+        movePosOf(color, distance);        
+        hand.removeByValue(distance);
+        hand.fill(deck);
+        if(deck.isEmpty()) { endGame(); return; }
+        //TODO notify what action was taken
+        turn = otherColor(color)+TURN_MOVE;
+        notifyPositions();
+        notifyHand(player, hand);
+        notifyTurn();
     }
 
     synchronized void retreat(UserSession player, String values)
@@ -162,14 +177,23 @@ public class Game
             return;
         }
         
-        if(!hasCard(color, distance))
+        Hand hand = handOf(color);
+        if(!hand.hasCard(distance))
         {
             // hacked or buggy client
             send(player, "EYou don't have the advance card "+distance);
             return;
         }
         
-        // TODO remove card, update position and hand
+        movePosOf(color, -distance);
+        hand.removeByValue(distance);
+        hand.fill(deck);
+        if(deck.isEmpty() || fencerOffStrip()) { endGame(); return; }
+        //TODO notify what action was taken
+        turn = otherColor(color)+TURN_MOVE;
+        notifyPositions();
+        notifyHand(player, hand);
+        notifyTurn();
     }
     
     synchronized void parry(UserSession player)
@@ -192,6 +216,16 @@ public class Game
         //TODO remove cards and update state
     }
     
+    private void endGame()
+    {
+        //TODO handle endGame
+    }
+    
+    private final boolean fencerOffStrip()
+    {
+        return whitepos < 1 || blackpos > 23;
+    }
+    
     private void send(UserSession who, String what)
     {
         if(who != null) who.send(what);
@@ -209,6 +243,32 @@ public class Game
         return in-'0';
     }
     
+    private void notifyPositions()
+    {
+        StringBuilder sb = new StringBuilder(3);
+        sb.append("x");
+        sb.append('a'+whitepos-1);
+        sb.append('a'+blackpos-1);
+        sendAll(sb.toString());
+    }
+    
+    private final void notifyHand(UserSession player, Hand hand)
+    {
+        send(player, hand.toString());
+    }
+    
+    private void notifyTurn()
+    {
+        sendAll("t"+turn);
+    }
+    
+    private final int otherColor(int color)
+    {
+        if(color == COLOR_WHITE) return COLOR_BLACK;
+        if(color == COLOR_BLACK) return COLOR_WHITE;
+        return COLOR_NONE;
+    }
+    
     private final Hand handOf(int color)
     {
         if(color == COLOR_WHITE) return whiteHand;
@@ -216,8 +276,9 @@ public class Game
         return null;
     }
     
-    private boolean hasCard(int color, int distance)
+    private final void movePosOf(int color, int offset)
     {
-        return handOf(color).hasCard(distance);
+        if(color == COLOR_WHITE) whitepos += offset;
+        if(color == COLOR_BLACK) blackpos -= offset;
     }
 }
