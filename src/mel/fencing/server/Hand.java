@@ -24,14 +24,14 @@ public class Hand
 
     public boolean hasCard(int value)
     {
-        for(int i=0; i<HAND_SIZE; i++) if(card[i] != null && card[i].getValue() == value) return true;
+        for(Card c : card) if(c != null && c.getValue() == value) return true;
         return false;
     }
     
     public boolean hasCards(int value, int quantity)
     {
         int count = 0;
-        for(int i=0; i<HAND_SIZE; i++) if(card[i] != null && card[i].getValue() == value) count++;
+        for(Card c : card) if(c != null && c.getValue() == value) count++;
         return count >= quantity;
     }
     
