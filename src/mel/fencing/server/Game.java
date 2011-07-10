@@ -2,7 +2,8 @@ package mel.fencing.server;
 
 public class Game
 {
-    public static final int COLOR_NONE = 6;
+    //TODO RFI consider using powers of two so one bit each for color, canAdvance/Attack, canRetreat, and canParry 
+    public static final int COLOR_NONE = -10;
     public static final int COLOR_WHITE = 0;
     public static final int COLOR_BLACK = 10;
     public static final int TURN_MOVE = 0;
@@ -26,6 +27,8 @@ public class Game
     int blackpos = 23;
     int whitepos = 1;
     int turn = TURN_WHITE_MOVE;
+    int parryVal = -1;
+    int parryCount = -1;
     
     private Game(UserSession challenger, UserSession target)
     {
@@ -66,8 +69,9 @@ public class Game
     }
     
     
-    void attack(UserSession player, String values)
+    synchronized void attack(UserSession player, String values)
     {
+        if(values.length() != 2) send(player, "ESyntax error in attack:"+values);
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_MOVE) 
@@ -77,11 +81,12 @@ public class Game
             return;
         }
         
-        //TODO handle move logic
+        // TODO handle attack logic
     }
     
-    void move(UserSession player, String values)
+    synchronized void move(UserSession player, String values)
     {
+        if(values.length() != 1) send(player, "ESyntax error in advance:"+values);
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_MOVE) 
@@ -91,11 +96,12 @@ public class Game
             return;
         }
         
-        //TODO handle move logic
+        //TODO handle advance logic
     }
     
-    void retreat(UserSession player, String values)
+    synchronized void retreat(UserSession player, String values)
     {
+        if(values.length() != 1) send(player, "ESyntax error in retreat:"+values);
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
         if(turn != color+TURN_PARRY_OR_RETREAT && turn != color+TURN_MOVE)
@@ -104,10 +110,10 @@ public class Game
             else send(player, "ENot your turn to retreat");
         }
         
-        //TODO handle move logic
+        //TODO handle retreat logic
     }
     
-    void parry(UserSession player, String values)
+    synchronized void parry(UserSession player)
     {
         int color = playerColor(player);
         if(color == COLOR_NONE) send(player, "EYou are not a player in this game");
@@ -120,8 +126,14 @@ public class Game
         //TODO handle parry logic
     }
     
-    private synchronized void send(UserSession who, String what)
+    private void send(UserSession who, String what)
     {
         if(who != null) who.send(what);
+    }
+    
+    private void sendAll(String what)
+    {
+        send(white, what);
+        send(black, what);
     }
 }

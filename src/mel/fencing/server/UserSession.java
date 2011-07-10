@@ -98,14 +98,16 @@ public class UserSession extends Thread
                         game.retreat(this, s.substring(1));
                     break;
                     case 'p':
-                        game.parry(this, s.substring(1));
+                        game.parry(this);
                     break;
                     default:
                         badCommand(s);
                 }
             } catch(Exception e)
             {
-                int i = 0;
+                // shouldn't happen, but we want to see it if it does
+                // TODO RFE put this in a log file also
+                e.printStackTrace();
             }
         }
     }
