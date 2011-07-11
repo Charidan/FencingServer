@@ -17,6 +17,9 @@ public class Game
     public static final int TURN_WHITE_PARRY_OR_RETREAT =   COLOR_WHITE+TURN_PARRY_OR_RETREAT; 
     public static final int TURN_GAME_OVER = -1;
     
+    public static final boolean ATTACK_MAY_RETREAT = true;
+    public static final boolean ATTACK_NO_RETREAT = false;
+    
     UserSession black;
     UserSession white;
     Deck deck;
@@ -109,12 +112,17 @@ public class Game
         if(deck.isEmpty()) { endGame(); return; } 
         turn = otherColor(color)+TURN_PARRY_OR_RETREAT;
         
-        //TODO notify user of how many cards are in attack
         notifyPositions();
         notifyHand(player, hand);
+        notifyAttack(value, count, ATTACK_MAY_RETREAT);
         notifyTurn();
     }
     
+    private void notifyAttack(int value, int count, boolean mayRetreat)
+    {
+        sendAll("a"+value+""+count+(mayRetreat?"t":"f"));
+    }
+
     synchronized void standingAttack(UserSession player, String values)
     {
         if(values.length() != 2) send(player, "ESyntax error in attack:"+values);
@@ -144,16 +152,17 @@ public class Game
             return;
         }
         
-        // TODO handle attack logic
         parryVal = value;
         parryCount = count;
         hand.removeByValue(value, count);
         hand.fill(deck);
         // TODO distinguish engGame with final attack from endGame without
         // TODO check rule does game end when deck empty or when try to draw missing card?
+        // TODO if attack is checkmate, end the game
         if(deck.isEmpty()) { endGame(); return; } 
         turn = otherColor(color)+TURN_PARRY;
         notifyHand(player, hand);
+        notifyAttack(value, count, ATTACK_NO_RETREAT);
         notifyTurn();        
     }
     
