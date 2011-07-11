@@ -144,7 +144,6 @@ public class Game
             return;
         }
         
-        // TODO handle attack logic
         parryVal = value;
         parryCount = count;
         hand.removeByValue(value, count);
