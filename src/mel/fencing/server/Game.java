@@ -257,10 +257,11 @@ public class Game
             return;
         }
         
-        //TODO notify that a parry occurred
+        
         hand.removeByValue(parryVal, parryCount);
         //TODO special code for final parry
         turn = color+TURN_MOVE;
+        sendAll("q"); // notify parry occured
         notifyTurn();
     }
     
