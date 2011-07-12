@@ -17,9 +17,6 @@ public class Game
     public static final int TURN_WHITE_PARRY_OR_RETREAT =   COLOR_WHITE+TURN_PARRY_OR_RETREAT; 
     public static final int TURN_GAME_OVER = -1;
     
-    public static final boolean ATTACK_MAY_RETREAT = true;
-    public static final boolean ATTACK_NO_RETREAT = false;
-    
     UserSession black;
     UserSession white;
     Deck deck;
@@ -114,13 +111,13 @@ public class Game
         
         notifyPositions();
         notifyHand(player, hand);
-        notifyAttack(value, count, ATTACK_MAY_RETREAT);
+        notifyAttack(value, count, distance);
         notifyTurn();
     }
     
-    private void notifyAttack(int value, int count, boolean mayRetreat)
+    private void notifyAttack(int value, int count, int distance)
     {
-        sendAll("a"+value+""+count+(mayRetreat?"t":"f"));
+        sendAll("a"+value+""+count+""+distance);
     }
 
     synchronized void standingAttack(UserSession player, String values)
@@ -162,7 +159,7 @@ public class Game
         if(deck.isEmpty()) { endGame(); return; } 
         turn = otherColor(color)+TURN_PARRY;
         notifyHand(player, hand);
-        notifyAttack(value, count, ATTACK_NO_RETREAT);
+        notifyAttack(value, count, 0);
         notifyTurn();        
     }
     
@@ -199,13 +196,24 @@ public class Game
         hand.removeByValue(distance);
         hand.fill(deck);
         if(deck.isEmpty()) { endGame(); return; }
-        //TODO notify what action was taken
+        
         turn = otherColor(color)+TURN_MOVE;
         notifyPositions();
         notifyHand(player, hand);
+        notifyMove(distance);
         notifyTurn();
     }
 
+    private void notifyMove(int distance)
+    {
+        sendAll("m"+distance);
+    }
+    
+    private void notifyRetreat(int distance)
+    {
+        sendAll("r"+distance);
+    }
+    
     synchronized void retreat(UserSession player, String values)
     {
         if(values.length() != 1) send(player, "ESyntax error in retreat:"+values);
@@ -232,10 +240,11 @@ public class Game
         hand.removeByValue(distance);
         hand.fill(deck);
         if(deck.isEmpty() || fencerOffStrip()) { endGame(); return; }
-        //TODO notify what action was taken
+        
         turn = otherColor(color)+TURN_MOVE;
         notifyPositions();
         notifyHand(player, hand);
+        notifyRetreat(distance);
         notifyTurn();
     }
     

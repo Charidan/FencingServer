@@ -6,7 +6,9 @@ a[#][#][t/f]			an attack has been made [cardVal][cardCount][mayRetreat]
 b[name]					you are playing black against [name]
 c[name]					[name] has canceled/rejected a challenge from you
 h[#][#][#][#][#]		your hand contents
+m[#]					A move has been made [distance]
 q						the attack has been parried
+r[#]					A retreat has been made [distance]
 t[turn]					set [turn]
 w[name]					you are playing white against [name]
 x[a-w][a-w]				set Positions [whitepos][blackpos]
