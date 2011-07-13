@@ -29,6 +29,7 @@ public class Game
     int turn = TURN_WHITE_MOVE;
     int parryVal = -1;
     int parryCount = -1;
+    boolean finalParry = false;
     
     private Game(UserSession challenger, UserSession target)
     {
@@ -104,9 +105,7 @@ public class Game
         hand.removeByValue(distance);
         hand.removeByValue(value, count);
         hand.fill(deck);
-        // TODO distinguish engGame with final attack from endGame without
-        // TODO check rule does game end when deck empty or when try to draw missing card?
-        if(deck.isEmpty()) { endGame(); return; } 
+        if(deck.isEmpty()) { finalParry = true; notifyFinalParry(); }
         turn = otherColor(color)+TURN_PARRY_OR_RETREAT;
         
         notifyPositions();
@@ -118,6 +117,11 @@ public class Game
     private void notifyAttack(int value, int count, int distance)
     {
         sendAll("a"+value+""+count+""+distance);
+    }
+    
+    private void notifyFinalParry()
+    {
+        sendAll("f");
     }
 
     synchronized void standingAttack(UserSession player, String values)
@@ -153,10 +157,9 @@ public class Game
         parryCount = count;
         hand.removeByValue(value, count);
         hand.fill(deck);
-        // TODO distinguish engGame with final attack from endGame without
-        // TODO check rule does game end when deck empty or when try to draw missing card?
+        
         // TODO if attack is checkmate, end the game
-        if(deck.isEmpty()) { endGame(); return; } 
+        if(deck.isEmpty()) { finalParry = true; notifyFinalParry(); }
         turn = otherColor(color)+TURN_PARRY;
         notifyHand(player, hand);
         notifyAttack(value, count, 0);
@@ -242,6 +245,7 @@ public class Game
         if(deck.isEmpty() || fencerOffStrip()) { endGame(); return; }
         
         turn = otherColor(color)+TURN_MOVE;
+        if(finalParry) endGame();
         notifyPositions();
         notifyHand(player, hand);
         notifyRetreat(distance);
@@ -268,15 +272,26 @@ public class Game
         
         
         hand.removeByValue(parryVal, parryCount);
-        //TODO special code for final parry
         turn = color+TURN_MOVE;
         sendAll("q"); // notify parry occured
+        if(finalParry) endGame();
         notifyTurn();
     }
     
     private void endGame()
     {
-        //TODO handle endGame
+        turn = TURN_GAME_OVER;
+        if(whitepos < 1)  { sendAll("B0"); return; }
+        if(blackpos > 23) { sendAll("A0"); return; }
+        
+        int finalDistance = blackpos - whitepos;
+        int whiteCount = whiteHand.countCards(finalDistance);
+        int blackCount = blackHand.countCards(finalDistance);
+        if(whiteCount > blackCount) { sendAll("A2"); return; }
+        if(blackCount > whiteCount) { sendAll("B2"); return; }
+        if(12-whitepos > blackpos-12) { sendAll("B3"); return; }
+        if(12-whitepos < blackpos-12) { sendAll("A3"); return; }
+        sendAll("X");
     }
     
     private final boolean fencerOffStrip()

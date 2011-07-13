@@ -66,14 +66,19 @@ public class Hand
     
     public boolean hasCards(int value, int quantity)
     {
-        int count = 0;
-        for(Card c : card) if(c != null && c.getValue() == value) count++;
-        return count >= quantity;
+        return countCards(value) >= quantity;
     }
     
     public boolean hasCardWithCards(int single, int multiple, int count)
     {
         if(single == multiple) return hasCards(single, count+1);
         else return hasCard(single) && hasCards(multiple, count);
+    }
+
+    public int countCards(int value)
+    {
+        int count = 0;
+        for(Card c : card) if(c != null && c.getValue() == value) count++;
+        return count;
     }
 }
