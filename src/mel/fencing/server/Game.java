@@ -158,14 +158,29 @@ public class Game
         hand.removeByValue(value, count);
         hand.fill(deck);
         
-        // TODO if attack is checkmate, end the game
-        if(deck.isEmpty()) { finalParry = true; notifyFinalParry(); }
-        turn = otherColor(color)+TURN_PARRY;
+        if(checkmate(color)) { notifyCannotParry(color); turn = TURN_GAME_OVER; }
+        else 
+        {
+            if(deck.isEmpty()) { finalParry = true; notifyFinalParry(); }
+            turn = otherColor(color)+TURN_PARRY;
+        }
+        
         notifyHand(player, hand);
         notifyAttack(value, count, 0);
         notifyTurn();        
     }
     
+    private void notifyCannotParry(int color)
+    {
+        sendAll(color == Game.COLOR_WHITE ? "A1" : "B1");
+    }
+
+    private boolean checkmate(int color)
+    {
+        Hand hand = handOf(otherColor(color));
+        return hand.hasCards(parryVal, parryCount);
+    }
+
     synchronized void move(UserSession player, String values)
     {
         if(values.length() != 1) send(player, "ESyntax error in advance:"+values);
