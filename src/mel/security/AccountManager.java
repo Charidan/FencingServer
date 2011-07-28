@@ -26,7 +26,8 @@ public class AccountManager
 
     private File dir;
     private static AccountManager singleton = null;
-    public static final String defaultDir = "C:/gameServer/accounts";
+    public static final String defaultDir = "/home/twilly0/fencingserver/accounts";
+    public static final String winDir = "C:/gameServer/accounts";
     public static final String linuxDir = "/home/charidan/fencingdata/accounts";
 
     public AccountManager(String directoryName)
