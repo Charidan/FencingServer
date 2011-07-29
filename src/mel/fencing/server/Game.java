@@ -307,6 +307,8 @@ public class Game
         if(12-whitepos > blackpos-12) { sendAll("B3"); return; }
         if(12-whitepos < blackpos-12) { sendAll("A3"); return; }
         sendAll("X");
+        Server.lobby.removeFromGame(black);
+        Server.lobby.removeFromGame(white);
     }
     
     private final boolean fencerOffStrip()

@@ -19,6 +19,11 @@ public class Lobby
      * c = rejected by target
      */
     
+    synchronized public void removeFromGame(UserSession player)
+    {
+        playing.remove(player);
+    }
+    
     synchronized public void challengeOpen(UserSession challenger)
     {
         if(playing.contains(challenger))
