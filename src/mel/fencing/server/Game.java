@@ -173,6 +173,8 @@ public class Game
     private void notifyCannotParry(int color)
     {
         sendAll(color == Game.COLOR_WHITE ? "A1" : "B1");
+        Server.lobby.removeFromGame(black);
+        Server.lobby.removeFromGame(white);
     }
 
     private boolean checkmate(int color)
