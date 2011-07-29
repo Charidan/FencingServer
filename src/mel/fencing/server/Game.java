@@ -4,48 +4,48 @@ public class Game
 {
     //TODO RFI consider using powers of two so one bit each for color, canAdvance/Attack, canRetreat, and canParry 
     public static final int COLOR_NONE = -10;
-    public static final int COLOR_WHITE = 0;
-    public static final int COLOR_BLACK = 10;
+    public static final int COLOR_GREEN = 0;
+    public static final int COLOR_PURPLE = 10;
     public static final int TURN_MOVE = 0;
     public static final int TURN_PARRY = 1;
     public static final int TURN_PARRY_OR_RETREAT = 2;
-    public static final int TURN_BLACK_MOVE =               COLOR_BLACK+TURN_MOVE;
-    public static final int TURN_BLACK_PARRY =              COLOR_BLACK+TURN_PARRY;
-    public static final int TURN_BLACK_PARRY_OR_RETREAT =   COLOR_BLACK+TURN_PARRY_OR_RETREAT; 
-    public static final int TURN_WHITE_MOVE =               COLOR_WHITE+TURN_MOVE;
-    public static final int TURN_WHITE_PARRY =              COLOR_WHITE+TURN_PARRY;
-    public static final int TURN_WHITE_PARRY_OR_RETREAT =   COLOR_WHITE+TURN_PARRY_OR_RETREAT; 
+    public static final int TURN_PURPLE_MOVE =               COLOR_PURPLE+TURN_MOVE;
+    public static final int TURN_PURPLE_PARRY =              COLOR_PURPLE+TURN_PARRY;
+    public static final int TURN_PURPLE_PARRY_OR_RETREAT =   COLOR_PURPLE+TURN_PARRY_OR_RETREAT; 
+    public static final int TURN_GREEN_MOVE =                COLOR_GREEN+TURN_MOVE;
+    public static final int TURN_GREEN_PARRY =               COLOR_GREEN+TURN_PARRY;
+    public static final int TURN_GREEN_PARRY_OR_RETREAT =    COLOR_GREEN+TURN_PARRY_OR_RETREAT; 
     public static final int TURN_GAME_OVER = -1;
     
-    UserSession black;
-    UserSession white;
+    UserSession purple;
+    UserSession green;
     Deck deck;
-    Hand whiteHand = new Hand();
-    Hand blackHand = new Hand();
+    Hand greenHand = new Hand();
+    Hand purpleHand = new Hand();
     int blackHP = 5;
     int whiteHP = 5;
-    int blackpos = 23;
-    int whitepos = 1;
-    int turn = TURN_WHITE_MOVE;
+    int purplePos = 23;
+    int greenPos = 1;
+    int turn = TURN_GREEN_MOVE;
     int parryVal = -1;
     int parryCount = -1;
     boolean finalParry = false;
     
     private Game(UserSession challenger, UserSession target)
     {
-        black = challenger;
-        white = target;
+        purple = challenger;
+        green = target;
         deck = new Deck();
         deck.shuffle();
-        black.setGame(this);
-        black.setColor(COLOR_BLACK);
-        white.setGame(this);
-        white.setColor(COLOR_WHITE);
+        purple.setGame(this);
+        purple.setColor(COLOR_PURPLE);
+        green.setGame(this);
+        green.setColor(COLOR_GREEN);
         sendNames();
-        blackHand.fill(deck);
-        sendBlackHand();
-        whiteHand.fill(deck);
-        sendWhiteHand();
+        purpleHand.fill(deck);
+        sendPurpleHand();
+        greenHand.fill(deck);
+        sendGreenHand();
     }
     
     public static Game newGame(UserSession challenger, UserSession target)
@@ -53,19 +53,19 @@ public class Game
         return new Game(challenger, target);
     }
     
-    private void sendWhiteHand() { white.send(whiteHand.toString()); }
-    private void sendBlackHand() { black.send(blackHand.toString()); }
+    private void sendGreenHand() { green.send(greenHand.toString()); }
+    private void sendPurpleHand() { purple.send(purpleHand.toString()); }
     
     private void sendNames()
     {
-        white.send("w"+black.getUsername());
-        black.send("b"+white.getUsername());
+        green.send("w"+purple.getUsername());
+        purple.send("b"+green.getUsername());
     }
     
     private final int playerColor(UserSession player)
     {
-        if(player == white) return COLOR_WHITE;
-        if(player == black) return COLOR_BLACK;
+        if(player == green) return COLOR_GREEN;
+        if(player == purple) return COLOR_PURPLE;
         return COLOR_NONE;
     }
     
@@ -93,7 +93,7 @@ public class Game
             return;
         }
         
-        if(blackpos - whitepos != (distance+value))
+        if(purplePos - greenPos != (distance+value))
         {
             send(player, "EYou are the wrong distance to jump-attack with a "+distance+" and "+value);
             return;
@@ -147,7 +147,7 @@ public class Game
             return;
         }
         
-        if(blackpos - whitepos != value)
+        if(purplePos - greenPos != value)
         {
             send(player, "EYou are the wrong distance to attack with a "+value);
             return;
@@ -158,7 +158,7 @@ public class Game
         hand.removeByValue(value, count);
         hand.fill(deck);
         
-        if(checkmate(color)) { notifyCannotParry(color); turn = TURN_GAME_OVER; }
+        if(checkmate(color)) { notifyCannotParry(color); turn = TURN_GAME_OVER; clearPlayers(); }
         else 
         {
             if(deck.isEmpty()) { finalParry = true; notifyFinalParry(); }
@@ -172,9 +172,7 @@ public class Game
     
     private void notifyCannotParry(int color)
     {
-        sendAll(color == Game.COLOR_WHITE ? "A1" : "B1");
-        Server.lobby.removeFromGame(black);
-        Server.lobby.removeFromGame(white);
+        sendAll(color == Game.COLOR_GREEN ? "A1" : "B1");
     }
 
     private boolean checkmate(int color)
@@ -198,7 +196,7 @@ public class Game
             return;
         }
  
-        if(blackpos-whitepos<=distance)
+        if(purplePos-greenPos<=distance)
         {
             send(player, "EMay not move through other fencer");
             return;
@@ -300,28 +298,28 @@ public class Game
     {
         turn = TURN_GAME_OVER;
         clearPlayers();
-        if(whitepos < 1)  { sendAll("B0"); return; }
-        if(blackpos > 23) { sendAll("A0"); return; }
+        if(greenPos < 1)  { sendAll("B0"); return; }
+        if(purplePos > 23) { sendAll("A0"); return; }
         
-        int finalDistance = blackpos - whitepos;
-        int whiteCount = whiteHand.countCards(finalDistance);
-        int blackCount = blackHand.countCards(finalDistance);
+        int finalDistance = purplePos - greenPos;
+        int whiteCount = greenHand.countCards(finalDistance);
+        int blackCount = purpleHand.countCards(finalDistance);
         if(whiteCount > blackCount) { sendAll("A2"); return; }
         if(blackCount > whiteCount) { sendAll("B2"); return; }
-        if(12-whitepos > blackpos-12) { sendAll("B3"); return; }
-        if(12-whitepos < blackpos-12) { sendAll("A3"); return; }
+        if(12-greenPos > purplePos-12) { sendAll("B3"); return; }
+        if(12-greenPos < purplePos-12) { sendAll("A3"); return; }
         sendAll("X");     
     }
     
     private void clearPlayers()
     {
-        Server.lobby.removeFromGame(black);
-        Server.lobby.removeFromGame(white);
+        Server.lobby.removeFromGame(purple);
+        Server.lobby.removeFromGame(green);
     }
     
     private final boolean fencerOffStrip()
     {
-        return whitepos < 1 || blackpos > 23;
+        return greenPos < 1 || purplePos > 23;
     }
     
     private void send(UserSession who, String what)
@@ -331,8 +329,8 @@ public class Game
     
     private void sendAll(String what)
     {
-        send(white, what);
-        send(black, what);
+        send(green, what);
+        send(purple, what);
     }
     
     static private final int parseDigit(char in)
@@ -345,8 +343,8 @@ public class Game
     {
         StringBuilder sb = new StringBuilder(3);
         sb.append("x");
-        sb.append((char)('a'+whitepos-1));
-        sb.append((char)('a'+blackpos-1));
+        sb.append((char)('a'+greenPos-1));
+        sb.append((char)('a'+purplePos-1));
         sendAll(sb.toString());
     }
     
@@ -362,28 +360,27 @@ public class Game
     
     private final int otherColor(int color)
     {
-        if(color == COLOR_WHITE) return COLOR_BLACK;
-        if(color == COLOR_BLACK) return COLOR_WHITE;
+        if(color == COLOR_GREEN) return COLOR_PURPLE;
+        if(color == COLOR_PURPLE) return COLOR_GREEN;
         return COLOR_NONE;
     }
     
     private final Hand handOf(int color)
     {
-        if(color == COLOR_WHITE) return whiteHand;
-        if(color == COLOR_BLACK) return blackHand;
+        if(color == COLOR_GREEN) return greenHand;
+        if(color == COLOR_PURPLE) return purpleHand;
         return null;
     }
     
     private final void movePosOf(int color, int offset)
     {
-        if(color == COLOR_WHITE) whitepos += offset;
-        if(color == COLOR_BLACK) blackpos -= offset;
+        if(color == COLOR_GREEN) greenPos += offset;
+        if(color == COLOR_PURPLE) purplePos -= offset;
     }
 
     public void cancel(UserSession userSession)
     {
-        Server.lobby.removeFromGame(white);
-        Server.lobby.removeFromGame(black);
+        clearPlayers();
         sendAll("L");
     }
 }
