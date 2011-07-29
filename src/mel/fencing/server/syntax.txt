@@ -22,6 +22,7 @@ B[#]					Black wins the game because [code]
 							3 = deck exhausted, better final position
 C[name]					[name] has canceled/withdrawn a challenge to you
 E[freeText]				an error message
+L						connection lost.
 T[name]					you have been challenged by [name]
 W[name | "an opponent"]	wait for opponent (challenge is pending with no error)
 X						The game was a tie

@@ -373,4 +373,11 @@ public class Game
         if(color == COLOR_WHITE) whitepos += offset;
         if(color == COLOR_BLACK) blackpos -= offset;
     }
+
+    public void cancel(UserSession userSession)
+    {
+        Server.lobby.removeFromGame(white);
+        Server.lobby.removeFromGame(black);
+        sendAll("L");
+    }
 }

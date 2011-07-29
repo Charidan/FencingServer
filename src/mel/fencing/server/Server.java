@@ -55,6 +55,8 @@ public class Server
             UserSession mapSession = name2session.get(name);
             if(mapSession == userSession) name2session.remove(name);
         }
+        Game game = userSession.getGame();
+        if(game != null) game.cancel(userSession);
         lobby.cancel(userSession);
         sessions.remove(userSession);
     }
