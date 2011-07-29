@@ -309,6 +309,11 @@ public class Game
         if(12-whitepos > blackpos-12) { sendAll("B3"); return; }
         if(12-whitepos < blackpos-12) { sendAll("A3"); return; }
         sendAll("X");
+        clearPlayers();
+    }
+    
+    private void clearPlayers()
+    {
         Server.lobby.removeFromGame(black);
         Server.lobby.removeFromGame(white);
     }
