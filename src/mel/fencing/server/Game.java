@@ -215,9 +215,9 @@ public class Game
         movePosOf(color, distance);        
         hand.removeByValue(distance);
         hand.fill(deck);
-        if(deck.isEmpty()) { endGame(); return; }
+        if(deck.isEmpty()) { endGame(); }
+        else turn = otherColor(color)+TURN_MOVE;
         
-        turn = otherColor(color)+TURN_MOVE;
         notifyPositions();
         notifyHand(player, hand);
         notifyMove(distance);
@@ -259,10 +259,11 @@ public class Game
         movePosOf(color, -distance);
         hand.removeByValue(distance);
         hand.fill(deck);
-        if(deck.isEmpty() || fencerOffStrip()) { endGame(); return; }
-        
-        turn = otherColor(color)+TURN_MOVE;
-        if(finalParry) endGame();
+        if(deck.isEmpty() || fencerOffStrip()) { endGame(); }
+        else {
+            turn = otherColor(color)+TURN_MOVE;
+            if(finalParry) endGame();
+        }
         notifyPositions();
         notifyHand(player, hand);
         notifyRetreat(distance);
