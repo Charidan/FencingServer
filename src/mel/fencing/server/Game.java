@@ -299,6 +299,7 @@ public class Game
     private void endGame()
     {
         turn = TURN_GAME_OVER;
+        clearPlayers();
         if(whitepos < 1)  { sendAll("B0"); return; }
         if(blackpos > 23) { sendAll("A0"); return; }
         
@@ -309,8 +310,7 @@ public class Game
         if(blackCount > whiteCount) { sendAll("B2"); return; }
         if(12-whitepos > blackpos-12) { sendAll("B3"); return; }
         if(12-whitepos < blackpos-12) { sendAll("A3"); return; }
-        sendAll("X");
-        clearPlayers();
+        sendAll("X");     
     }
     
     private void clearPlayers()
