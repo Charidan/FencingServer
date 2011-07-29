@@ -178,7 +178,7 @@ public class Game
     private boolean checkmate(int color)
     {
         Hand hand = handOf(otherColor(color));
-        return hand.hasCards(parryVal, parryCount);
+        return !hand.hasCards(parryVal, parryCount);
     }
 
     synchronized void move(UserSession player, String values)
